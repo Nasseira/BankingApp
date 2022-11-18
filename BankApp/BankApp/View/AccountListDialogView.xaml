@@ -1,0 +1,62 @@
+﻿<f:DialogWindowBase x:Class="BankApp.View.AccountListDialogView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+      xmlns:vm="clr-namespace:BankApp.ViewModel"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="400"
+      Title="Select Account" MinHeight="500" Width="400"
+      ShowInTaskbar="False" 
+      >
+
+    <Window.DataContext>
+        <vm:AccountListDialogViewModel x:Name="vm"/>
+    </Window.DataContext>
+    <Grid Margin="15,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <WrapPanel Margin="0,0,0,5">
+                <TextBlock Text="Filter" Margin="0,0,5,5"/>
+                <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" Width="310"/>
+            </WrapPanel>
+            <TextBlock Text="My Account(s)" FontWeight="Bold" FontSize="14" Grid.Row="1"/>
+            <ListView ItemsSource="{Binding MyAccounts}" SelectedItem="{Binding ToAccountSelected}" x:Name="myAccountListView" Margin="0,10" BorderBrush="Transparent">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding IBAN}"/>
+                            <Run Text=" - "/>
+                            <Run Text="{Binding Description}"/>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="0,15">
+            <TextBlock Text="Other Account(s)" FontWeight="Bold" FontSize="14"/>
+            <ListView ItemsSource="{Binding OtherAccounts}" SelectedItem="{Binding ToAccountSelected}" x:Name="otherAccountListView" Margin="0,10" BorderBrush="Transparent">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding IBAN}"/>
+                            <Run Text=" - "/>
+                            <Run Text="{Binding Description}"/>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3">
+            <Button x:Name="btnConfirm" Content="Confirm" Command="{Binding Confirm, ElementName=vm}" CommandParameter="{Binding ToAccountSelected}" Margin="0,10,10,0" Padding="5,1"/>
+        </StackPanel>
+    </Grid>
+</f:DialogWindowBase>

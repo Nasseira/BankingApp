@@ -1,0 +1,53 @@
+﻿<f:UserControlBase x:Class="BankApp.View.ManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vw="clr-namespace:BankApp.View"
+             xmlns:vm="clr-namespace:BankApp.ViewModel"
+             xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <vm:ManagerViewModel x:Name="vm"/>
+    </UserControl.DataContext>
+    <Grid>
+        <StackPanel>
+            <WrapPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Agency :" TextWrapping="Wrap"/>
+                    <ComboBox ItemsSource="{Binding Agencies}" DisplayMemberPath="Name" SelectedItem="{Binding AgencySelected, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Width="80"/>
+                </Grid>
+            </WrapPanel>
+            
+            <DataGrid ItemsSource="{Binding Clients}" SelectedItem="{Binding ClientSelected, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" IsReadOnly="True" Margin="0,10">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" SortDirection="Descending"/>
+                    <DataGridTextColumn Header="Firstname" Binding="{Binding Firstname}" />
+                    <DataGridTextColumn Header="Lastname" Binding="{Binding Lastname}" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Button Content="New Client" Command="{Binding NewClient}" Margin="0,0,5,0" Padding="5,1" Width="100"/>
+            
+            <f:MyTabControl x:Name="tabControl" Margin="5,5" HasCloseButton="True">
+                <TabItem  x:Name="manageClientTab" Header="Client" Tag="Client">
+                    <vw:ManageClientView DataContext="{Binding ManageClientVM}" />
+                </TabItem>
+                <TabItem x:Name="manageAccountsTab" Header="Accounts" Tag="Accounts">
+                    <vw:ManageAccountsView DataContext="{Binding ManageAccountsVM}"/>
+                </TabItem>
+            </f:MyTabControl>
+            <WrapPanel HorizontalAlignment="Center" Margin="0,10">
+                <Button Content="Save" Command="{Binding Save, ElementName=vm}" CommandParameter="{Binding ClientSelected}" Margin="0,0,5,0" Padding="5,1"/>
+                <Button Content="Cancel" Command="{Binding Cancel, ElementName=vm}" CommandParameter="{Binding ClientSelected}" Margin="0,0,5,0" Padding="5,1"/>
+                <Button Content="Delete" Command="{Binding Delete, ElementName=vm}" CommandParameter="{Binding ClientSelected}" Padding="5,1"/>
+            </WrapPanel>
+
+        </StackPanel>
+    </Grid>
+</f:UserControlBase>

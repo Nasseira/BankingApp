@@ -1,0 +1,108 @@
+﻿<f:UserControlBase x:Class="BankApp.View.StatementCardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:f="clr-namespace:PRBD_Framework;assembly=PRBD_Framework"
+             xmlns:vw="clr-namespace:BankApp.View"
+             xmlns:m="clr-namespace:BankApp.Model"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"      
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=m:BankTransfer, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <f:NullToCollapseConverter x:Key="CollapseExecutionIfNull" />
+        <f:EnumToVisibleConverter x:Key="EnumToVis" />
+    </UserControl.Resources>
+    <Grid>
+        <Border Background="{Binding ColorStatement}" BorderBrush="Gainsboro" BorderThickness="1">
+            <StackPanel Width="600">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="530"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Description}" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Grid.Column="1" FontSize="16" FontWeight="Bold">
+                        <Run Text="{Binding Amount}" />
+                        <Run Text="€" />
+                    </TextBlock>
+                </Grid>
+                <WrapPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250"/>
+                            <ColumnDefinition Width="290"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <WrapPanel Margin="5,5,50,0">
+                            <TextBlock Text="Created on : " TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding Creation}" TextWrapping="Wrap" FontWeight="Bold"/>
+                        </WrapPanel>
+                        <WrapPanel Margin="5,5,0,0" Grid.Column="1">
+                            <TextBlock Visibility="{Binding Execution, Converter={StaticResource CollapseExecutionIfNull}}">
+                                <Run Text="Effective on:"/>
+                                <Run Text="{Binding Execution}" FontWeight="Bold"/>
+                            </TextBlock>
+                        </WrapPanel>
+                        <WrapPanel Margin="5,5,0,0" Grid.Column="2">
+                            <!--<TextBlock Text="{Binding Solde}" FontWeight="Bold"/>-->
+                        </WrapPanel>
+                    </Grid>
+
+                </WrapPanel>
+                <WrapPanel Margin="5,5,0,0">
+                    <TextBlock Text="Created by : " TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding User.UserFullName}" TextWrapping="Wrap" FontWeight="Bold"/>
+                </WrapPanel>
+                <WrapPanel Margin="5,5,0,0">
+                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="From : "/>
+                        <Run Text="{Binding FromAccount.Description}" FontWeight="Bold"/>
+                        <Run Text=" ("/>
+                        <Run Text="{Binding FromAccount.IBAN}"/>
+                        <Run Text=") "/>
+                    </TextBlock>
+                </WrapPanel>
+                <WrapPanel Margin="5,5,0,0">
+                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="To : "/>
+                        <Run Text="{Binding ToAccount.Description}" FontWeight="Bold"/>
+                        <Run Text=" ("/>
+                        <Run Text="{Binding ToAccount.IBAN}"/>
+                        <Run Text=") "/>
+                    </TextBlock>
+                </WrapPanel>
+                <TextBlock Margin="5,5,0,0">
+                    <Run Text="Tx #"/>
+                    <Run Text="{Binding Id}"/>
+                </TextBlock>
+                <WrapPanel Margin="5,5,0,0" Visibility="{Binding StatetementState, Converter={StaticResource EnumToVis}, ConverterParameter={x:Static m:StatementState.FUTURE}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="520"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="This transaction is forseen in the future. You may cancel it." FontStyle="Italic" TextWrapping="Wrap" Foreground="#FF145B7E"/>
+                        <Button  Content="Cancel" Command="{Binding DataContext.CancelFutureTransfer, RelativeSource={RelativeSource AncestorType=f:UserControlBase, AncestorLevel=2}}" 
+                            CommandParameter="{Binding}" Grid.Column="1" Padding="5,1"/>
+                    </Grid>
+                </WrapPanel>
+
+                <WrapPanel Margin="5,5,0,0">
+                    <TextBlock Text="Category : " TextWrapping="Wrap"/>
+                    <ComboBox ItemsSource="{Binding DataContext.Categories, RelativeSource={RelativeSource AncestorType=f:UserControlBase, AncestorLevel=2}}" DisplayMemberPath="Name" 
+                              SelectedItem="{Binding Category}" Width="200">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding DataContext.CategorySelected, RelativeSource={RelativeSource AncestorType=f:UserControlBase, AncestorLevel=2}}"
+                                                       CommandParameter="{Binding}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</f:UserControlBase>
